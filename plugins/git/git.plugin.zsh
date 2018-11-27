@@ -91,7 +91,21 @@ alias gdca='git diff --cached'
 alias gdcw='git diff --cached --word-diff'
 alias gdct='git describe --tags `git rev-list --tags --max-count=1`'
 alias gds='git diff --staged'
-alias gdt='git diff-tree --no-commit-id --name-only -r'
+#alias gdt='git diff-tree --no-commit-id --name-only -r'
+function gdt() {
+    params="$@"
+    if brew ls --versions scmpuff > /dev/null; then
+        params=`scmpuff expand "$@" 2>/dev/null`
+    fi
+
+    if [ $# -eq 0 ]; then
+        git difftool --no-prompt --extcmd "icdiff --line-numbers --no-bold" | less
+    elif [ ${#params} -eq 0 ]; then
+        git difftool --no-prompt --extcmd "icdiff --line-numbers --no-bold" "$@" | less
+    else
+        git difftool --no-prompt --extcmd "icdiff --line-numbers --no-bold" "$params" | less
+    fi
+}
 alias gdw='git diff --word-diff'
 
 gdv() { git diff -w "$@" | view - }
